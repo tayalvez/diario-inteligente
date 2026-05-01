@@ -1,0 +1,490 @@
+<!-- ── Estado de hoje ─────────────────────────────────────────── -->
+@if (estadoHoje) {
+  <div class="estado-widget">
+    <div class="estado-widget-title">Estado de hoje</div>
+    <div class="estado-barras">
+      @if (estadoHoje.humor !== null) {
+        <div class="barra-row">
+          <span class="barra-nome">Humor</span>
+          <div class="barra-track"><div class="barra-fill humor" [style.width]="barWidth(estadoHoje.humor)"></div></div>
+          <span class="barra-val humor">{{ exibir(estadoHoje.humor) }}</span>
+        </div>
+      }
+      @if (estadoHoje.energia !== null) {
+        <div class="barra-row">
+          <span class="barra-nome">Energia</span>
+          <div class="barra-track"><div class="barra-fill energia" [style.width]="barWidth(estadoHoje.energia)"></div></div>
+          <span class="barra-val energia">{{ exibir(estadoHoje.energia) }}</span>
+        </div>
+      }
+      @if (estadoHoje.estresse !== null) {
+        <div class="barra-row">
+          <span class="barra-nome">Estresse</span>
+          <div class="barra-track"><div class="barra-fill estresse" [style.width]="barWidth(estadoHoje.estresse)"></div></div>
+          <span class="barra-val estresse">{{ exibir(estadoHoje.estresse) }}</span>
+        </div>
+      }
+      @if (estadoHoje.sensibilidade !== null) {
+        <div class="barra-row">
+          <span class="barra-nome">Sensibilidade</span>
+          <div class="barra-track"><div class="barra-fill sensibilidade" [style.width]="barWidth(estadoHoje.sensibilidade)"></div></div>
+          <span class="barra-val sensibilidade">{{ exibir(estadoHoje.sensibilidade) }}</span>
+        </div>
+      }
+      @if (estadoHoje.serenidade !== null) {
+        <div class="barra-row">
+          <span class="barra-nome">Serenidade</span>
+          <div class="barra-track"><div class="barra-fill serenidade" [style.width]="barWidth(estadoHoje.serenidade)"></div></div>
+          <span class="barra-val serenidade">{{ exibir(estadoHoje.serenidade) }}</span>
+        </div>
+      }
+      @if (estadoHoje.interesse !== null) {
+        <div class="barra-row">
+          <span class="barra-nome">Interesse</span>
+          <div class="barra-track"><div class="barra-fill interesse" [style.width]="barWidth(estadoHoje.interesse)"></div></div>
+          <span class="barra-val interesse">{{ exibir(estadoHoje.interesse) }}</span>
+        </div>
+      }
+    </div>
+    <span class="estado-count">{{ estadoHoje.total_eventos }} anotação(ões) hoje</span>
+    <button class="btn-outline btn-sm" (click)="abrirHistorico()">Histórico</button>
+  </div>
+}
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Minhas Anotações</h1>
+  </div>
+</div>
+
+<!-- ── Lista recente ──────────────────────────────────────────── -->
+<div class="section-title-row">
+  <div class="section-title">Recentes</div>
+  <button class="btn-primary" (click)="abrirModal()">
+    <i class="ph ph-plus ph-icon-btn"></i> Registrar
+  </button>
+</div>
+
+@if (carregando) {
+  <div class="loading-state"><div class="loading-spinner"></div><p>Carregando...</p></div>
+} @else if (eventos.length === 0) {
+  <div class="empty-state">
+    <i class="ph ph-notebook empty-icon"></i>
+    <h3>Nenhuma anotação registrada</h3>
+    <p>Clique em um estado acima para começar.</p>
+  </div>
+} @else {
+  <div class="exp-lista">
+    @for (e of eventos; track e.id) {
+      <div class="exp-card" [class.confirmando]="confirmandoExclusao === e.id">
+        <div class="exp-card-left">
+          <span class="exp-hora">{{ formatarDateTime(e.data_hora) }}</span>
+          <span class="exp-label">{{ e.evento }}</span>
+          @if (e.descricao) {
+            <div class="exp-descricao">{{ e.descricao }}</div>
+          }
+          @if (e.tags?.length) {
+            <div class="tags-row">
+              @for (tag of e.tags!; track tag) {
+                <span class="tag-chip">{{ tag }}</span>
+              }
+            </div>
+          }
+          @if (e.relacoes_contagem > 0) {
+            <div class="relacoes-badge-row">
+              <button class="tag-chip relacao-chip relacao-chip--btn" (click)="abrirModalRelacoes(e)">
+                <i class="ph ph-arrows-merge"></i> {{ e.relacoes_contagem }} relação(ões)
+              </button>
+            </div>
+          }
+        </div>
+        <div class="exp-card-dims">
+          <div class="exp-dims-topo">
+            <div class="card-barras">
+              <div class="card-barra-row">
+                <span class="card-barra-label">Humor</span>
+                <div class="card-barra-track">
+                  <div class="card-barra-fill humor" [style.width]="barWidth(e.humor)"></div>
+                </div>
+                <span class="card-barra-val humor">{{ exibir(e.humor) }}</span>
+              </div>
+              <div class="card-barra-row">
+                <span class="card-barra-label">Energia</span>
+                <div class="card-barra-track">
+                  <div class="card-barra-fill energia" [style.width]="barWidth(e.energia)"></div>
+                </div>
+                <span class="card-barra-val energia">{{ exibir(e.energia) }}</span>
+              </div>
+              <div class="card-barra-row">
+                <span class="card-barra-label">Estresse</span>
+                <div class="card-barra-track">
+                  <div class="card-barra-fill estresse" [style.width]="barWidth(e.estresse)"></div>
+                </div>
+                <span class="card-barra-val estresse">{{ exibir(e.estresse) }}</span>
+              </div>
+              <div class="card-barra-row">
+                <span class="card-barra-label">Sensibilidade</span>
+                <div class="card-barra-track">
+                  <div class="card-barra-fill sensibilidade" [style.width]="barWidth(e.sensibilidade)"></div>
+                </div>
+                <span class="card-barra-val sensibilidade">{{ exibir(e.sensibilidade) }}</span>
+              </div>
+              <div class="card-barra-row">
+                <span class="card-barra-label">Serenidade</span>
+                <div class="card-barra-track">
+                  <div class="card-barra-fill serenidade" [style.width]="barWidth(e.serenidade)"></div>
+                </div>
+                <span class="card-barra-val serenidade">{{ exibir(e.serenidade) }}</span>
+              </div>
+              <div class="card-barra-row">
+                <span class="card-barra-label">Interesse</span>
+                <div class="card-barra-track">
+                  <div class="card-barra-fill interesse" [style.width]="barWidth(e.interesse)"></div>
+                </div>
+                <span class="card-barra-val interesse">{{ exibir(e.interesse) }}</span>
+              </div>
+            </div>
+            @for (entry of dimensoesExtrasEntries(e); track entry[0]) {
+              <div class="dim-chip extra"><span>{{ entry[0] }}</span><strong>{{ exibir(entry[1]) }}</strong></div>
+            }
+          </div>
+        </div>
+        <div class="exp-card-actions">
+          @if (confirmandoExclusao === e.id) {
+            <span class="conf-text">Excluir?</span>
+            <button class="btn-danger btn-sm" (click)="confirmarExclusao(e.id)">Sim</button>
+            <button class="btn-outline btn-sm" (click)="cancelarExclusao()">Não</button>
+          } @else {
+            <button class="action-btn" (click)="editarEvento(e)">
+              <i class="ph ph-pencil-simple"></i>
+            </button>
+            <button class="action-btn danger" (click)="pedirConfirmacao(e.id)">
+              <i class="ph ph-trash"></i>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<!-- ════ MODAL REGISTRO — estilo caderno ════ -->
+<div class="modal-overlay" [class.open]="modalAberto"
+     (click)="$event.target === $event.currentTarget && fecharModal()">
+  <div class="modal modal-caderno"
+       [class.has-bg]="notebookTheme !== 'padrao'"
+       [ngStyle]="getModalBgStyle()"
+       (click)="$event.stopPropagation()">
+
+    <!-- Margem / espiral do caderno -->
+    <div class="caderno-margem">
+      @for (n of [0,1,2,3,4,5,6,7,8]; track n) {
+        <div class="caderno-argola"></div>
+      }
+    </div>
+
+    <div class="caderno-corpo">
+    <div class="caderno-scroll">
+
+      <!-- Seletor de tema -->
+      <div class="nb-theme-picker">
+        @for (t of notebookThemes; track t.id) {
+          <button class="nb-theme-btn" [class.active]="notebookTheme === t.id"
+            [title]="t.label" (click)="setNotebookTheme(t.id)">
+            @if (t.img) {
+              <img [src]="t.img" class="nb-theme-thumb" [alt]="t.label" />
+            } @else {
+              <span class="nb-theme-default">✦</span>
+            }
+          </button>
+        }
+      </div>
+
+      <!-- Cabeçalho -->
+      <div class="modal-header caderno-header">
+        <h2 class="modal-title caderno-titulo">
+          @if (modoEdicao) {
+            <i class="ph ph-pencil-simple"></i> Editar anotação
+          } @else {
+            <i class="ph ph-note-pencil"></i> Nova anotação
+          }
+        </h2>
+        <div class="caderno-data-topo">
+          <input type="datetime-local" class="caderno-data-input" [(ngModel)]="form.data_hora" />
+        </div>
+        <button class="modal-close" (click)="fecharModal()">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+
+      <!-- Título (obrigatório) -->
+      <div class="form-group">
+        <label class="form-label">Título <span class="req">*</span></label>
+        <input type="text" class="input-field caderno-input" [(ngModel)]="form.evento"/>
+      </div>
+
+      <!-- Descrição -->
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <textarea class="input-field caderno-input textarea" rows="2" [(ngModel)]="form.descricao"></textarea>
+      </div>
+
+      <!-- Dimensões obrigatórias -->
+      <div class="form-group">
+        <label class="form-label">Dimensões <span class="req">*</span></label>
+
+        <div class="dim-slider-row">
+          <span class="dim-slider-nome humor">Humor</span>
+          <input type="range" class="slider" min="0" max="10" step="0.5"
+            [value]="form.humor"
+            (input)="form.humor = +$any($event.target).value" />
+          <span class="dim-slider-val humor">{{ form.humor }}</span>
+        </div>
+
+        <div class="dim-slider-row">
+          <span class="dim-slider-nome energia">Energia</span>
+          <input type="range" class="slider" min="0" max="10" step="0.5"
+            [value]="form.energia"
+            (input)="form.energia = +$any($event.target).value" />
+          <span class="dim-slider-val energia">{{ form.energia }}</span>
+        </div>
+
+        <div class="dim-slider-row">
+          <span class="dim-slider-nome estresse">Estresse</span>
+          <input type="range" class="slider" min="0" max="10" step="0.5"
+            [value]="form.estresse"
+            (input)="form.estresse = +$any($event.target).value" />
+          <span class="dim-slider-val estresse">{{ form.estresse }}</span>
+        </div>
+
+        <div class="dim-slider-row">
+          <span class="dim-slider-nome sensibilidade">Sensibilidade</span>
+          <input type="range" class="slider" min="0" max="10" step="0.5"
+            [value]="form.sensibilidade"
+            (input)="form.sensibilidade = +$any($event.target).value" />
+          <span class="dim-slider-val sensibilidade">{{ form.sensibilidade }}</span>
+        </div>
+
+        <div class="dim-slider-row">
+          <span class="dim-slider-nome serenidade">Serenidade</span>
+          <input type="range" class="slider" min="0" max="10" step="0.5"
+            [value]="form.serenidade"
+            (input)="form.serenidade = +$any($event.target).value" />
+          <span class="dim-slider-val serenidade">{{ form.serenidade }}</span>
+        </div>
+
+        <div class="dim-slider-row">
+          <span class="dim-slider-nome interesse">Interesse</span>
+          <input type="range" class="slider" min="0" max="10" step="0.5"
+            [value]="form.interesse"
+            (input)="form.interesse = +$any($event.target).value" />
+          <span class="dim-slider-val interesse">{{ form.interesse }}</span>
+        </div>
+
+        <div class="slider-labels"><span>0</span><span>5</span><span>10</span></div>
+      </div>
+
+      <!-- Toggle nível avançado -->
+      <div class="nivel-toggle">
+        <button class="nivel-btn" [class.active]="nivelForm === 'avancado'"
+          (click)="nivelForm = nivelForm === 'basico' ? 'avancado' : 'basico'">
+          @if (nivelForm === 'basico') {
+            <i class="ph ph-caret-down"></i> Adicionar detalhes
+          } @else {
+            <i class="ph ph-caret-up"></i> Menos detalhes
+          }
+        </button>
+      </div>
+
+      @if (nivelForm === 'avancado') {
+
+        <!-- Tags -->
+        <div class="form-group">
+          <label class="form-label">Tags</label>
+          <input type="text" class="input-field caderno-input" [(ngModel)]="form.tags"
+            placeholder="trabalho, pressão, reunião (separadas por vírgula)" />
+        </div>
+
+        <!-- Contexto (chave-valor) -->
+        <div class="form-group">
+          <label class="form-label">Contexto</label>
+          @for (item of form.contextoItens; track $index) {
+            <div class="contexto-item">
+              <span class="contexto-chave">{{ item.chave }}</span>
+              <span class="contexto-valor">{{ item.valor }}</span>
+              <button class="remove-btn" (click)="removerContexto($index)">
+                <i class="ph ph-x"></i>
+              </button>
+            </div>
+          }
+          <div class="contexto-add">
+            <input type="text" class="input-field caderno-input" [(ngModel)]="form.contextoChave"
+              placeholder="chave ex: local" style="flex:1" />
+            <input type="text" class="input-field caderno-input" [(ngModel)]="form.contextoValor"
+              placeholder="valor ex: trabalho" style="flex:2" />
+            <button class="btn-outline btn-sm" (click)="adicionarContexto()">
+              <i class="ph ph-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dimensões extras -->
+        <div class="form-group">
+          <label class="form-label">Dimensões extras</label>
+          @for (entry of formDimensoesExtrasEntries(); track entry[0]) {
+            <div class="dim-slider-row">
+              <span class="dim-slider-nome extra">{{ entry[0] }}</span>
+              <input type="range" class="slider" min="0" max="10" step="1"
+                [value]="form.dimensoesExtras[entry[0]]"
+                (input)="form.dimensoesExtras[entry[0]] = +$any($event.target).value" />
+              <span class="dim-slider-val extra">{{ form.dimensoesExtras[entry[0]] }}</span>
+              <button class="remove-btn" (click)="removerDimensaoExtra(entry[0])">
+                <i class="ph ph-x"></i>
+              </button>
+            </div>
+          }
+          <div class="contexto-add">
+            <input type="text" class="input-field caderno-input" [(ngModel)]="form.dimensoesExtrasNome"
+              placeholder="ex: foco, disposição" style="flex:2" />
+            <input type="number" class="input-field caderno-input" [(ngModel)]="form.dimensoesExtrasValor"
+              min="0" max="10" style="flex:1" />
+            <button class="btn-outline btn-sm" (click)="adicionarDimensaoExtra()">
+              <i class="ph ph-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Relações -->
+        <div class="form-group relacoes-section">
+          <label class="form-label">
+            <i class="ph ph-link-simple ph-icon-btn"></i> Relações
+          </label>
+
+          <!-- Relações existentes (edição) -->
+          @if (modoEdicao) {
+            @if (relacoes.length === 0) {
+              <p class="relacoes-vazio">nenhuma relação ainda</p>
+            } @else {
+              @for (r of relacoes; track r.id) {
+                <div class="relacao-item">
+                  <i class="ph ph-arrows-merge relacao-icon"></i>
+                  <span class="relacao-label">{{ labelRelacao(r) }}</span>
+                  <span class="relacao-data">{{ dataRelacao(r) }}</span>
+                  <span class="relacao-badge">{{ (r.intensidade * 10).toFixed(0) }}</span>
+                  <button class="remove-btn" (click)="removerRelacao(r.id)">
+                    <i class="ph ph-x"></i>
+                  </button>
+                </div>
+              }
+            }
+          }
+
+          <!-- Relações pendentes (criação) -->
+          @if (!modoEdicao) {
+            @if (relacoesSelecionadas.length === 0) {
+              <p class="relacoes-vazio">nenhuma relação selecionada</p>
+            } @else {
+              @for (r of relacoesSelecionadas; track r.evento_id) {
+                <div class="relacao-item">
+                  <i class="ph ph-arrows-merge relacao-icon"></i>
+                  <span class="relacao-label">{{ r.label }}</span>
+                  <span class="relacao-badge">{{ r.intensidade }}</span>
+                  <button class="remove-btn" (click)="removerRelacaoPendente(r.evento_id)">
+                    <i class="ph ph-x"></i>
+                  </button>
+                </div>
+              }
+            }
+          }
+
+          <!-- Adicionar nova relação -->
+          @if (sugestoes.length > 0) {
+            <div class="relacao-add">
+              <select class="input-field caderno-input relacao-select" [(ngModel)]="novaRelacaoId">
+                <option [ngValue]="null">— selecionar anotação —</option>
+                @for (s of sugestoes; track s.id) {
+                  <option [ngValue]="s.id">{{ s.evento }} · {{ formatarDateTime(s.data_hora) }}</option>
+                }
+              </select>
+              @if (novaRelacaoId !== null) {
+                <div class="relacao-sliders">
+                  <div class="dim-slider-row">
+                    <span class="dim-slider-nome extra">Intensidade</span>
+                    <input type="range" class="slider" min="0" max="10" step="1"
+                      [value]="novaRelacaoIntensidade"
+                      (input)="novaRelacaoIntensidade = +$any($event.target).value" />
+                    <span class="dim-slider-val extra">{{ novaRelacaoIntensidade }}</span>
+                  </div>
+                </div>
+                <button class="btn-outline btn-sm" (click)="adicionarRelacao()">
+                  <i class="ph ph-plus"></i> Relacionar
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+
+    </div><!-- /caderno-scroll -->
+
+    <div class="modal-actions caderno-actions">
+      <button class="btn-outline" (click)="fecharModal()">Cancelar</button>
+      <button class="btn-primary" (click)="salvar()">
+        <i class="ph ph-check ph-icon-btn"></i>
+        {{ modoEdicao ? 'Salvar' : 'Registrar' }}
+      </button>
+    </div>
+
+    </div><!-- /caderno-corpo -->
+  </div>
+</div>
+
+<app-historico-modal #historicoModal></app-historico-modal>
+
+@if (modalRelacoes) {
+  <div class="modal-overlay open" (click)="fecharModalRelacoes()">
+    <div class="modal-relacoes modal-caderno" (click)="$event.stopPropagation()">
+      <div class="modal-relacoes-header">
+        <span class="modal-relacoes-titulo">relações de "{{ eventoRelacoes?.evento }}"</span>
+        <button class="modal-close-btn" (click)="fecharModalRelacoes()"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="modal-relacoes-body">
+        @if (relacoesPainelCarregando) {
+          <p class="relacoes-vazio">carregando...</p>
+        } @else if (relacoesPainel.length === 0) {
+          <p class="relacoes-vazio">nenhuma relação encontrada</p>
+        } @else {
+          @for (r of relacoesPainel; track r.id) {
+            <div class="modal-relacao-item" [class.modal-relacao-item--expandida]="relacaoExpandidaId === r.id" (click)="r.motivo && toggleRelacaoMotivo(r.id)">
+              <div class="modal-relacao-header">
+                <i class="ph ph-arrows-merge relacao-icon"></i>
+                <span class="relacao-label">{{ r.outro_evento_label }}</span>
+                <span class="relacao-data">{{ dataRelacao(r) }}</span>
+                <span class="relacao-badge">{{ forcaRelacao(r) }}</span>
+                @if (r.motivo) {
+                  <i class="ph modal-relacao-caret" [class.ph-caret-down]="relacaoExpandidaId !== r.id" [class.ph-caret-up]="relacaoExpandidaId === r.id"></i>
+                }
+              </div>
+              @if (r.motivo && relacaoExpandidaId === r.id) {
+                <div class="modal-relacao-motivo">
+                  @for (parte of r.motivo.split('; '); track parte) {
+                    <div class="modal-relacao-motivo-linha">
+                      <i class="ph ph-dot-outline"></i> {{ parte }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}
+
+@if (toast) {
+  <div class="toast-container">
+    <div class="toast" [ngClass]="'toast-' + toast.tipo">{{ toast.mensagem }}</div>
+  </div>
+}

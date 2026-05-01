@@ -1,0 +1,356 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">IA & Insights</h1>
+    <p class="page-subtitle">Análise dos seus registros e padrões de percepção</p>
+  </div>
+  <button class="btn-outline" (click)="atualizarInsights()">
+    <i class="ph ph-arrows-clockwise ph-icon-btn"></i> Atualizar
+  </button>
+</div>
+
+@if (carregando) {
+  <p class="loading-text">Processando análises...</p>
+} @else {
+  <div class="insights-grid">
+
+    <!-- Correlações -->
+    <div class="card insights-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-chart-scatter ph-icon-btn"></i> Correlações
+        </h2>
+        <span style="font-size:12px;color:var(--text-soft)">{{ totalEventos }} anotações analisadas</span>
+      </div>
+      @if (correlacoes.length) {
+        @for (c of correlacoes; track c.dimensao_a + c.dimensao_b) {
+          <div class="correlacao-item">
+            <div class="correlacao-labels">
+              <span>{{ c.dimensao_a }}</span>
+              @if (c.direcao === 'positiva') {
+                <i class="ph ph-arrows-left-right" style="color:var(--text-soft);font-size:13px"></i>
+              } @else {
+                <i class="ph ph-arrows-down-up" style="color:var(--text-soft);font-size:13px"></i>
+              }
+              <span>{{ c.dimensao_b }}</span>
+              <span style="margin-left:auto;font-size:13px;color:var(--text-soft)">
+                {{ c.coeficiente > 0 ? '+' : '' }}{{ c.coeficiente }}
+              </span>
+            </div>
+            <div class="correlacao-interpretacao">{{ c.interpretacao }}</div>
+            <div class="correlacao-bar">
+              <div class="correlacao-fill"
+                [style.width]="larguraCorrelacao(c.coeficiente) + '%'"
+                [style.background]="corCorrelacao(c.coeficiente)"></div>
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="empty-state">
+          <i class="ph ph-chart-scatter empty-icon"></i>
+          <p>{{ mensagemCorrelacao || 'Dados insuficientes para correlações.' }}</p>
+        </div>
+      }
+    </div>
+
+    <!-- Padrões -->
+    <div class="card insights-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-trend-up ph-icon-btn"></i> Padrões
+        </h2>
+      </div>
+      @if (padroes.length) {
+        @for (p of padroes; track p.tipo) {
+          <div class="padrao-card">
+            <div class="padrao-content">
+              <div class="padrao-titulo">{{ p.titulo }}</div>
+              <div class="padrao-descricao">{{ p.descricao }}</div>
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="empty-state">
+          <i class="ph ph-trend-up empty-icon"></i>
+          <p>Continue registrando para detectar padrões.</p>
+        </div>
+      }
+    </div>
+
+    <!-- Padrões comportamentais -->
+    <div class="card insights-card full-width">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-brain ph-icon-btn"></i> Padrões Comportamentais
+        </h2>
+        <span style="font-size:12px;color:var(--text-soft)">análise profunda</span>
+      </div>
+      @if (comportamentais.length) {
+        @for (p of comportamentais; track p.tipo) {
+          <div class="padrao-card comportamental">
+            <div class="padrao-content">
+              <div class="padrao-titulo">{{ p.titulo }}</div>
+              <div class="padrao-descricao">{{ p.descricao }}</div>
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="empty-state">
+          <i class="ph ph-brain empty-icon"></i>
+          <p>Continue registrando para detectar padrões comportamentais profundos.</p>
+        </div>
+      }
+    </div>
+
+    <!-- Qualidade das Relações -->
+    <div class="card insights-card full-width">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-scales ph-icon-btn"></i> Qualidade das Relações
+        </h2>
+        @if (qualidadeRelacoes?.total) {
+          <span style="font-size:12px;color:var(--text-soft)">{{ qualidadeRelacoes.total }} relações analisadas</span>
+        }
+      </div>
+      @if (qualidadeRelacoes?.total > 0) {
+        <div class="qualidade-resumo">
+          <div class="qualidade-stat forte">
+            <span class="qualidade-pct">{{ qualidadeRelacoes.pct_fortes }}%</span>
+            <span class="qualidade-label">relações fortes<br><small>3+ fatores</small></span>
+          </div>
+          <div class="qualidade-stat fraca">
+            <span class="qualidade-pct">{{ qualidadeRelacoes.pct_fracas }}%</span>
+            <span class="qualidade-label">coincidência provável<br><small>1 fator</small></span>
+          </div>
+        </div>
+        @if (qualidadeRelacoes.fortes?.length) {
+          <div class="qualidade-secao">
+            <div class="qualidade-secao-titulo">Relações mais evidentes</div>
+            @for (r of qualidadeRelacoes.fortes; track r.par) {
+              <div class="qualidade-item forte">
+                <span class="qualidade-par">{{ r.par }}</span>
+                <span class="qualidade-fatores-badge forte">{{ r.num_fatores }} fatores</span>
+              </div>
+            }
+          </div>
+        }
+        @if (qualidadeRelacoes.fracas?.length) {
+          <div class="qualidade-secao">
+            <div class="qualidade-secao-titulo">Possíveis coincidências</div>
+            @for (r of qualidadeRelacoes.fracas; track r.par) {
+              <div class="qualidade-item fraca">
+                <span class="qualidade-par">{{ r.par }}</span>
+                <span class="qualidade-fatores-badge fraca">1 fator</span>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        <div class="empty-state">
+          <i class="ph ph-scales empty-icon"></i>
+          <p>Nenhuma relação encontrada para analisar.</p>
+        </div>
+      }
+    </div>
+
+    <!-- Hub Emocional -->
+    <div class="card insights-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-star ph-icon-btn"></i> Hub Emocional
+        </h2>
+      </div>
+      @if (insightHub) {
+        <div class="padrao-card comportamental">
+          <div class="padrao-content">
+            <div class="padrao-titulo">{{ insightHub.titulo }}</div>
+            <div class="padrao-descricao">{{ insightHub.descricao }}</div>
+          </div>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <i class="ph ph-star empty-icon"></i>
+          <p>Registre mais anotações para identificar o centro do seu mapa emocional.</p>
+        </div>
+      }
+    </div>
+
+    <!-- Evolução de Estado -->
+    <div class="card insights-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-trend-up ph-icon-btn"></i> Evolução de Estado
+        </h2>
+      </div>
+      @if (insightEvolucao) {
+        <div class="padrao-card comportamental">
+          <div class="padrao-content">
+            <div class="padrao-titulo">{{ insightEvolucao.titulo }}</div>
+            <div class="padrao-descricao">{{ insightEvolucao.descricao }}</div>
+          </div>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <i class="ph ph-trend-up empty-icon"></i>
+          <p>Registre o mesmo estado várias vezes para ver sua evolução.</p>
+        </div>
+      }
+    </div>
+
+    <!-- Cluster Emocional -->
+    <div class="card insights-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-graph ph-icon-btn"></i> Cluster Emocional
+        </h2>
+      </div>
+      @if (insightCluster) {
+        <div class="padrao-card comportamental">
+          <div class="padrao-content">
+            <div class="padrao-titulo">{{ insightCluster.titulo }}</div>
+            <div class="padrao-descricao">{{ insightCluster.descricao }}</div>
+          </div>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <i class="ph ph-graph empty-icon"></i>
+          <p>Crie mais relações entre anotações para detectar clusters emocionais.</p>
+        </div>
+      }
+    </div>
+
+    <!-- Percepção Subjetiva -->
+    <div class="card insights-card full-width">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-eye ph-icon-btn"></i> Percepção Subjetiva
+        </h2>
+        <span class="percepcao-badge" title="Esses padrões refletem seus registros, não necessariamente a realidade">
+          Baseado na sua percepção
+        </span>
+      </div>
+
+      @if (perceptionBias?.total_eventos > 0) {
+        <p class="percepcao-aviso">{{ perceptionBias.aviso_geral }}</p>
+
+        <!-- Viés de valência -->
+        <div class="percepcao-secao">
+          <div class="percepcao-secao-titulo">Distribuição de humor nos registros</div>
+          <div class="valencia-barras">
+            <div class="valencia-item">
+              <span class="valencia-label">Negativo</span>
+              <div class="valencia-bar-track">
+                <div class="valencia-bar negativo" [style.width]="larguraPct(perceptionBias.vies_valencia?.negativo)"></div>
+              </div>
+              <span class="valencia-pct">{{ pct(perceptionBias.vies_valencia?.negativo) }}</span>
+            </div>
+            <div class="valencia-item">
+              <span class="valencia-label">Neutro</span>
+              <div class="valencia-bar-track">
+                <div class="valencia-bar neutro" [style.width]="larguraPct(perceptionBias.vies_valencia?.neutro)"></div>
+              </div>
+              <span class="valencia-pct">{{ pct(perceptionBias.vies_valencia?.neutro) }}</span>
+            </div>
+            <div class="valencia-item">
+              <span class="valencia-label">Positivo</span>
+              <div class="valencia-bar-track">
+                <div class="valencia-bar positivo" [style.width]="larguraPct(perceptionBias.vies_valencia?.positivo)"></div>
+              </div>
+              <span class="valencia-pct">{{ pct(perceptionBias.vies_valencia?.positivo) }}</span>
+            </div>
+          </div>
+          @if (perceptionBias.vies_valencia?.insight) {
+            <p class="percepcao-nota">{{ perceptionBias.vies_valencia.insight }}</p>
+          }
+        </div>
+
+        <!-- Viés de intensidade -->
+        @if (perceptionBias.vies_intensidade?.insight) {
+          <div class="percepcao-secao">
+            <div class="percepcao-secao-titulo">Intensidade dos registros</div>
+            <div class="intensidade-resumo">
+              <span class="intensidade-num">{{ pct(perceptionBias.vies_intensidade.pct_extremos) }}</span>
+              <span class="intensidade-desc">dos registros descrevem estados intensos (extremos)</span>
+            </div>
+            <p class="percepcao-nota">{{ perceptionBias.vies_intensidade.insight }}</p>
+          </div>
+        }
+
+        <!-- Tags frequentes -->
+        @if (perceptionBias.vies_registro?.tags_frequentes?.length) {
+          <div class="percepcao-secao">
+            <div class="percepcao-secao-titulo">Tags mais frequentes nos registros</div>
+            <div class="tags-bias-lista">
+              @for (t of perceptionBias.vies_registro.tags_frequentes; track t.tag) {
+                <div class="tag-bias-item">
+                  <span class="tag-bias-nome">{{ t.tag }}</span>
+                  <div class="valencia-bar-track" style="flex:1">
+                    <div class="valencia-bar neutro" [style.width]="larguraPct(t.proporcao)"></div>
+                  </div>
+                  <span class="tag-bias-pct">{{ pct(t.proporcao) }} dos registros</span>
+                </div>
+              }
+            </div>
+            @if (perceptionBias.vies_registro.aviso) {
+              <p class="percepcao-nota">{{ perceptionBias.vies_registro.aviso }}</p>
+            }
+          </div>
+        }
+
+        <!-- Insights de metapercepção -->
+        @if (perceptionBias.insights_metapercepao?.length) {
+          <div class="percepcao-secao">
+            <div class="percepcao-secao-titulo">Análise de metapercepção</div>
+            @for (ins of perceptionBias.insights_metapercepao; track ins.tipo) {
+              <div class="padrao-card comportamental percepcao-insight">
+                <div class="padrao-content">
+                  <div class="padrao-titulo">{{ ins.titulo }}</div>
+                  <div class="padrao-descricao">{{ ins.descricao }}</div>
+                  <span class="percepcao-mini-badge">padrão percebido</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      } @else {
+        <div class="empty-state">
+          <i class="ph ph-eye empty-icon"></i>
+          <p>Registre mais eventos para analisar seus padrões de percepção.</p>
+        </div>
+      }
+    </div>
+
+    <!-- Recomendações -->
+    <div class="card insights-card full-width">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="ph ph-sparkle ph-icon-btn"></i> Recomendações
+        </h2>
+      </div>
+      @if (recomendacoes.length) {
+        @for (r of recomendacoes; track r.categoria) {
+          <div class="recomendacao-card" [ngClass]="r.prioridade">
+            <div class="rec-content">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <div class="rec-titulo">{{ r.titulo }}</div>
+                <span class="prioridade-badge" [ngClass]="'prioridade-' + r.prioridade"
+                  [style.background]="corPrioridade(r.prioridade) + '20'"
+                  [style.color]="corPrioridade(r.prioridade)">{{ r.prioridade }}</span>
+              </div>
+              <div class="rec-descricao">{{ r.descricao }}</div>
+            </div>
+          </div>
+        }
+      } @else {
+        <p class="loading-text">Sem recomendações disponíveis</p>
+      }
+    </div>
+
+  </div>
+}
+
+@if (toast) {
+  <div class="toast-container">
+    <div class="toast" [ngClass]="'toast-' + toast.tipo">{{ toast.mensagem }}</div>
+  </div>
+}

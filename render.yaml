@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: diario-de-eventos
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    disk:
+      name: diario-dados
+      mountPath: /app/data
+      sizeGB: 1

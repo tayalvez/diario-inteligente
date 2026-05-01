@@ -1,0 +1,180 @@
+/* ── Largura máxima dos cards do dashboard ────────────────────── */
+.dash-wrapper {
+  max-width: 840px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Padding interno dos cards ────────────────────────────────── */
+.card {
+  padding: 32px;
+}
+
+/* ── Period Selector ──────────────────────────────────────────── */
+.period-btn {
+  padding: 5px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  background: var(--bg-warm);
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.period-btn.active,
+.period-btn:hover {
+  background: linear-gradient(135deg, var(--accent-terra), var(--accent-cereja));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 3px 10px rgba(199, 92, 92, 0.24);
+}
+
+/* ── Barras ────────────────────────────────────────────────────── */
+.barras-hoje {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.barra-row-dash {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.barra-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-soft);
+  width: 58px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 10px;
+}
+
+.barra-track-dash {
+  flex: 1;
+  height: 9px;
+  background: var(--bg-soft);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.barra-fill-dash {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.barra-fill-dash.humor         { background: linear-gradient(90deg, #D88C9A, #E8AABA); }
+.barra-fill-dash.energia       { background: linear-gradient(90deg, #7FA87F, #A0C8A0); }
+.barra-fill-dash.estresse      { background: linear-gradient(90deg, #C75C5C, #D88080); }
+.barra-fill-dash.sensibilidade { background: linear-gradient(90deg, #B07FBF, #C8A0D8); }
+.barra-fill-dash.serenidade    { background: linear-gradient(90deg, #5BAAB0, #7ECAD0); }
+.barra-fill-dash.interesse     { background: linear-gradient(90deg, #D4A84B, #E8C070); }
+
+.barra-num {
+  font-family: var(--font-title);
+  font-size: 14px;
+  font-weight: 700;
+  width: 24px;
+  text-align: right;
+}
+
+.barra-num.humor         { color: #C06878; }
+.barra-num.energia       { color: #4A7A4A; }
+.barra-num.estresse      { color: #A04040; }
+.barra-num.sensibilidade { color: #8A5A9A; }
+.barra-num.serenidade    { color: #3A8A90; }
+.barra-num.interesse     { color: #A07830; }
+
+/* ── Tabela do histórico ──────────────────────────────────────── */
+.historico-tabela {
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1.5px solid var(--border-light);
+}
+
+.hist-header {
+  display: grid;
+  grid-template-columns: 52px repeat(7, 1fr);
+  background: var(--bg-soft);
+  padding: 9px 12px;
+  font-weight: 800;
+  font-size: 10px;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  gap: 4px;
+}
+
+.hist-row {
+  display: grid;
+  grid-template-columns: 52px repeat(7, 1fr);
+  padding: 9px 12px;
+  border-top: 1px solid var(--border-light);
+  gap: 4px;
+  align-items: center;
+  transition: background 0.12s;
+}
+
+.hist-row:hover { background: rgba(207, 161, 141, 0.08); }
+
+.hist-data { font-weight: 700; color: var(--text-dark); }
+
+.hist-val {
+  font-weight: 800;
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .barra-label { width: 68px; font-size: 12px; }
+  .barra-num   { font-size: 20px; }
+  .period-btn  { font-size: 14px; }
+  .top-nome    { font-size: 18px; }
+  .top-total   { font-size: 13px; }
+}
+
+/* ── Top Chips ─────────────────────────────────────────────────── */
+.top-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-soft);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 7px 14px;
+  transition: var(--transition);
+}
+
+.top-chip:hover {
+  transform: translateY(-1px) rotate(0.3deg);
+  box-shadow: var(--shadow-xs);
+}
+
+.top-nome {
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-transform: lowercase;
+}
+
+.top-total {
+  font-size: 11px;
+  color: var(--text-soft);
+  font-weight: 700;
+  background: rgba(207, 161, 141, 0.18);
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+}

@@ -1,0 +1,161 @@
+<div class="dash-wrapper">
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ saudacao }}</h1>
+    <p class="page-subtitle">{{ datahoje }}</p>
+  </div>
+</div>
+
+<!-- Streak -->
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header">
+    <h2 class="card-title">Sequência de registros</h2>
+  </div>
+  <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+    <div style="text-align:center">
+      <div style="font-family:'Caveat',cursive;font-size:44px;font-weight:700;color:var(--accent-cereja)">{{ streakAtual }}</div>
+      <div style="font-size:12px;color:var(--text-soft)">dias seguidos</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-family:'Caveat',cursive;font-size:44px;font-weight:700;color:var(--accent-salvia)">{{ streakMaximo }}</div>
+      <div style="font-size:12px;color:var(--text-soft)">maior sequência</div>
+    </div>
+    @if (resumo) {
+      <div style="text-align:center;margin-left:auto">
+        <div style="font-family:'Caveat',cursive;font-size:44px;font-weight:700;color:var(--accent-terra)">{{ resumo.total_eventos }}</div>
+        <div style="font-size:12px;color:var(--text-soft)">anotações em {{ periodo }} dias</div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Período -->
+<div style="display:flex;gap:8px;margin-bottom:16px">
+  @for (d of [14, 30, 60, 90]; track d) {
+    <button class="period-btn" [class.active]="periodo === d" (click)="mudarPeriodo(d)">{{ d }}d</button>
+  }
+</div>
+
+@if (carregando) {
+  <p class="loading-text">Carregando dados...</p>
+} @else {
+
+  <!-- Estado de hoje -->
+  @if (estadoHoje) {
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header">
+        <h2 class="card-title">Estado percebido hoje</h2>
+        <span style="font-size:12px;color:var(--text-soft)">{{ estadoHoje.total_eventos }} anotação(ões) · baseado nos seus registros</span>
+      </div>
+      <div class="barras-hoje">
+        @if (estadoHoje.humor !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Humor</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash humor" [style.width]="barWidth(estadoHoje.humor)"></div></div>
+            <span class="barra-num humor">{{ exibir(estadoHoje.humor) }}</span>
+          </div>
+        }
+        @if (estadoHoje.energia !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Energia</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash energia" [style.width]="barWidth(estadoHoje.energia)"></div></div>
+            <span class="barra-num energia">{{ exibir(estadoHoje.energia) }}</span>
+          </div>
+        }
+        @if (estadoHoje.estresse !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Estresse</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash estresse" [style.width]="barWidth(estadoHoje.estresse)"></div></div>
+            <span class="barra-num estresse">{{ exibir(estadoHoje.estresse) }}</span>
+          </div>
+        }
+        @if (estadoHoje.sensibilidade !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Sensibilidade</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash sensibilidade" [style.width]="barWidth(estadoHoje.sensibilidade)"></div></div>
+            <span class="barra-num sensibilidade">{{ exibir(estadoHoje.sensibilidade) }}</span>
+          </div>
+        }
+        @if (estadoHoje.serenidade !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Serenidade</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash serenidade" [style.width]="barWidth(estadoHoje.serenidade)"></div></div>
+            <span class="barra-num serenidade">{{ exibir(estadoHoje.serenidade) }}</span>
+          </div>
+        }
+        @if (estadoHoje.interesse !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Interesse</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash interesse" [style.width]="barWidth(estadoHoje.interesse)"></div></div>
+            <span class="barra-num interesse">{{ exibir(estadoHoje.interesse) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Médias do período -->
+  @if (resumo) {
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header">
+        <h2 class="card-title">Médias percebidas no período ({{ periodo }} dias)</h2>
+        <button class="btn-outline btn-sm" (click)="abrirHistorico()">Histórico</button>
+      </div>
+      <div class="barras-hoje">
+        @if (resumo.media_humor !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Humor</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash humor" [style.width]="barWidth(resumo.media_humor)"></div></div>
+            <span class="barra-num humor">{{ exibir(resumo.media_humor) }}</span>
+          </div>
+        }
+        @if (resumo.media_energia !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Energia</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash energia" [style.width]="barWidth(resumo.media_energia)"></div></div>
+            <span class="barra-num energia">{{ exibir(resumo.media_energia) }}</span>
+          </div>
+        }
+        @if (resumo.media_estresse !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Estresse</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash estresse" [style.width]="barWidth(resumo.media_estresse)"></div></div>
+            <span class="barra-num estresse">{{ exibir(resumo.media_estresse) }}</span>
+          </div>
+        }
+        @if (resumo.media_sensibilidade !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Sensibilidade</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash sensibilidade" [style.width]="barWidth(resumo.media_sensibilidade)"></div></div>
+            <span class="barra-num sensibilidade">{{ exibir(resumo.media_sensibilidade) }}</span>
+          </div>
+        }
+        @if (resumo.media_serenidade !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Serenidade</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash serenidade" [style.width]="barWidth(resumo.media_serenidade)"></div></div>
+            <span class="barra-num serenidade">{{ exibir(resumo.media_serenidade) }}</span>
+          </div>
+        }
+        @if (resumo.media_interesse !== null) {
+          <div class="barra-row-dash">
+            <span class="barra-label">Interesse</span>
+            <div class="barra-track-dash"><div class="barra-fill-dash interesse" [style.width]="barWidth(resumo.media_interesse)"></div></div>
+            <span class="barra-num interesse">{{ exibir(resumo.media_interesse) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+}
+
+@if (toast) {
+  <div class="toast-container">
+    <div class="toast" [ngClass]="'toast-' + toast.tipo">{{ toast.mensagem }}</div>
+  </div>
+}
+
+</div>
+
+<app-historico-modal #historicoModal></app-historico-modal>

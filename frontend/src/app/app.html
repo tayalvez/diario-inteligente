@@ -1,0 +1,57 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <i class="ph-fill ph-fill-book-open logo-icon"></i>
+            <span class="logo-text">meu diário</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a class="nav-btn" routerLink="/dashboard" routerLinkActive="active">
+            <i class="ph ph-house nav-icon"></i>
+            <span class="nav-label">Dashboard</span>
+        </a>
+        <a class="nav-btn" routerLink="/eventos" routerLinkActive="active">
+            <i class="ph ph-note-pencil nav-icon"></i>
+            <span class="nav-label">Anotações</span>
+        </a>
+        <a class="nav-btn" routerLink="/grafo" routerLinkActive="active">
+            <i class="ph ph-graph nav-icon"></i>
+            <span class="nav-label">Grafo</span>
+        </a>
+        <a class="nav-btn" routerLink="/insights" routerLinkActive="active">
+            <i class="ph ph-brain nav-icon"></i>
+            <span class="nav-label">IA & Insights</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="streak-widget">
+            <i class="ph-fill ph-fill-fire streak-icon"></i>
+            <div class="streak-info">
+                <span class="streak-num">{{ streakAtual }}</span>
+                <span class="streak-text">dias seguidos</span>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <router-outlet />
+</main>
+
+<!-- Bottom Navigation (mobile) -->
+<nav class="bottom-nav">
+    <a class="bottom-nav-item" routerLink="/dashboard" routerLinkActive="active">
+        <i class="ph ph-house nav-icon"></i><span>Dashboard</span>
+    </a>
+    <a class="bottom-nav-item" routerLink="/eventos" routerLinkActive="active">
+        <i class="ph ph-note-pencil nav-icon"></i><span>Anotações</span>
+    </a>
+    <a class="bottom-nav-item" routerLink="/grafo" routerLinkActive="active">
+        <i class="ph ph-graph nav-icon"></i><span>Grafo</span>
+    </a>
+    <a class="bottom-nav-item" routerLink="/insights" routerLinkActive="active">
+        <i class="ph ph-brain nav-icon"></i><span>Insights</span>
+    </a>
+</nav>

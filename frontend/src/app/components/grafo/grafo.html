@@ -1,0 +1,134 @@
+<div class="grafo-toolbar">
+  <div class="toolbar-left">
+    <button class="btn-outline btn-sm" (click)="irParaEventos()">
+      <i class="ph ph-arrow-left ph-icon-btn"></i> Anotações
+    </button>
+    @if (modo === 'local') {
+      <span class="modo-badge local">
+        <i class="ph ph-magnifying-glass ph-icon-btn"></i> Grafo Local
+      </span>
+      <button class="btn-outline btn-sm" (click)="verGlobal()">Ver grafo global</button>
+    } @else {
+      <span class="modo-badge global">
+        <i class="ph ph-globe ph-icon-btn"></i> Grafo Global
+      </span>
+    }
+    @if (grafoDados) {
+      <span class="stats-badge">
+        <i class="ph ph-circle-dashed ph-icon-btn"></i> {{ grafoDados.total_nos }} nós
+        &nbsp;·&nbsp;
+        <i class="ph ph-link-simple ph-icon-btn"></i> {{ grafoDados.total_arestas }} relações
+      </span>
+    }
+  </div>
+  <div class="toolbar-right">
+    @if (modo === 'global') {
+      <input type="date" class="input-field filtro-sm" [(ngModel)]="filtroDataInicio" />
+      <input type="date" class="input-field filtro-sm" [(ngModel)]="filtroDataFim" />
+      <button class="btn-primary btn-sm" (click)="aplicarFiltros()">
+        <i class="ph ph-funnel ph-icon-btn"></i> Filtrar
+      </button>
+    }
+    @if (modo === 'local') {
+      <label class="form-label-sm">Profundidade:</label>
+      <input type="number" class="input-field filtro-sm" [(ngModel)]="profundidade" min="1" max="4" style="width:60px" />
+      <button class="btn-primary btn-sm" (click)="carregarGrafo()">
+        <i class="ph ph-arrows-clockwise ph-icon-btn"></i> Atualizar
+      </button>
+    }
+    <button class="btn-outline btn-sm" (click)="fitGrafo()">
+      <i class="ph ph-crosshair-simple ph-icon-btn"></i> Centralizar
+    </button>
+  </div>
+</div>
+
+<div class="grafo-area">
+  @if (carregando) {
+    <div class="grafo-loading">
+      <div class="loading-spinner-large"></div>
+      <p>Carregando grafo de anotações...</p>
+    </div>
+  }
+  @if (erro) {
+    <div class="grafo-erro">
+      <i class="ph ph-warning erro-icon"></i>
+      <p>{{ erro }}</p>
+      <button class="btn-primary" (click)="carregarGrafo()">Tentar novamente</button>
+    </div>
+  }
+  @if (!carregando && !erro && grafoDados && grafoDados.total_nos === 0) {
+    <div class="grafo-vazio">
+      <i class="ph ph-graph" style="font-size:64px;opacity:0.4"></i>
+      <h3>Nenhuma relação encontrada</h3>
+      <p>Crie relações entre anotações para visualizá-las aqui.</p>
+      <button class="btn-primary" (click)="irParaEventos()">Ir para Anotações</button>
+    </div>
+  }
+
+  <div #grafoContainer class="vis-container" [class.hidden]="carregando || erro || (grafoDados?.total_nos === 0)"></div>
+
+  <div class="painel-lateral" [class.open]="painelAberto">
+    @if (noSelecionado) {
+      <div class="painel-header">
+        <div>
+          <h3 class="painel-titulo">{{ noSelecionado.evento }}</h3>
+          <div class="painel-hora">{{ formatarData(noSelecionado.timestamp) }}</div>
+          <div class="painel-dims">
+            <span class="pdim humor">H {{ percentual(noSelecionado.humor) }}</span>
+            <span class="pdim energia">E {{ percentual(noSelecionado.energia) }}</span>
+            <span class="pdim estresse">St {{ percentual(noSelecionado.estresse) }}</span>
+            <span class="pdim sensibilidade">Sb {{ percentual(noSelecionado.sensibilidade) }}</span>
+            <span class="pdim serenidade">Sr {{ percentual(noSelecionado.serenidade) }}</span>
+            <span class="pdim interesse">In {{ percentual(noSelecionado.interesse) }}</span>
+          </div>
+        </div>
+        <button class="modal-close" (click)="fecharPainel()">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="painel-relacoes">
+        <div class="painel-secao-titulo">
+          <i class="ph ph-link-simple ph-icon-btn"></i>
+          {{ noSelecionado.relacoes_contagem }} associação(ões) percebida(s)
+        </div>
+        @for (a of arestasDoNo; track a.id) {
+          <div class="painel-aresta">
+            <div class="aresta-header">
+              <i class="ph aresta-dir" [class.ph-arrow-right]="a.from === noSelecionado.id" [class.ph-arrow-left]="a.from !== noSelecionado.id"></i>
+              <span class="aresta-outro">{{ outroEvento(a)?.evento ?? '—' }}</span>
+              <span class="aresta-int">{{ percentual(a.intensidade) }}</span>
+            </div>
+            @if (motivoPartes(a.motivo).length > 0) {
+              <div class="aresta-motivos">
+                @for (parte of motivoPartes(a.motivo); track parte) {
+                  <div class="aresta-motivo-linha">
+                    <i class="ph ph-dot-outline"></i> {{ parte }}
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+      <div class="painel-acoes">
+        <button class="btn-primary btn-sm" (click)="verGrafoLocal()">
+          <i class="ph ph-magnifying-glass ph-icon-btn"></i> Ver grafo local
+        </button>
+        <button class="btn-outline btn-sm" (click)="irParaEventos()">
+          <i class="ph ph-arrow-left ph-icon-btn"></i> Anotações
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="legenda">
+    <div class="legenda-titulo">Legenda</div>
+    <div class="legenda-item"><span class="legenda-cor" style="background:#c8f0d4"></span>humor alto (percebido)</div>
+    <div class="legenda-item"><span class="legenda-cor" style="background:#b8d4f0"></span>humor médio (percebido)</div>
+    <div class="legenda-item"><span class="legenda-cor" style="background:#f0b8d4"></span>humor baixo (percebido)</div>
+    <div class="legenda-item"><span class="legenda-cor" style="background:#CFA18D"></span>associação percebida</div>
+    <div class="legenda-percepcao" title="As relações refletem padrões nos seus registros, não necessariamente a realidade">
+      Baseado na sua percepção
+    </div>
+  </div>
+</div>

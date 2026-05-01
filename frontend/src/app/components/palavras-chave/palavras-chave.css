@@ -1,0 +1,380 @@
+/* ── Abas ─────────────────────────────────────────────────────── */
+.abas-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: rgba(255,255,255,0.5);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  width: fit-content;
+}
+
+.aba-btn {
+  padding: 7px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.aba-btn.active {
+  background: linear-gradient(135deg, #C8A8E8, #E8A8C0);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(180,130,200,0.28);
+}
+
+.aba-btn:hover:not(.active) { background: var(--bg-hover); color: var(--text-dark); }
+
+/* ── Registros de hoje ────────────────────────────────────────── */
+.registros-hoje {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.registro-card {
+  background: var(--card-base);
+  border: 1.5px solid var(--border-light);
+  border-left: 4px solid var(--accent-lilas);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-xs);
+  transition: var(--transition);
+}
+.registro-card:hover { box-shadow: var(--shadow-sm); }
+
+.registro-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.registro-palavra {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-dark);
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.registro-cat {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-soft);
+  background: var(--bg-soft);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.intensidade-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-light);
+  transition: var(--transition);
+}
+.dot.ativo { box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+
+.registro-nota {
+  font-size: 13px;
+  color: var(--text-mid);
+  margin-top: 8px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.registro-evento {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+.evento-link-icon { color: var(--accent-lilas); }
+
+/* ── Biblioteca ───────────────────────────────────────────────── */
+.categoria-section { margin-bottom: 28px; }
+
+.categoria-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.categoria-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.categoria-count {
+  font-size: 11px;
+  background: var(--bg-soft);
+  color: var(--text-soft);
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+}
+
+.palavras-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.palavra-card {
+  background: var(--card-base);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-xs);
+}
+.palavra-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+
+.palavra-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.palavra-texto {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.palavra-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.palavra-usos {
+  font-size: 11px;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+.hoje-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4A9E72;
+  background: #E8F8F0;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.reg-btn {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-mid);
+  background: var(--bg-soft);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+.reg-btn:hover { background: var(--card-lilas); border-color: var(--accent-lilas); color: var(--text-dark); }
+
+/* ── Nuvem ────────────────────────────────────────────────────── */
+.nuvem-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+  padding: 12px 0 20px;
+  min-height: 120px;
+}
+
+.nuvem-palavra {
+  font-weight: 800;
+  cursor: default;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  transition: transform 0.2s ease;
+  letter-spacing: -0.01em;
+}
+.nuvem-palavra:hover { transform: scale(1.08); }
+
+.legenda-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1.5px solid var(--border-light);
+  margin-top: 8px;
+}
+
+.legenda-cat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-mid);
+}
+
+.legenda-cat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Modal nova palavra ───────────────────────────────────────── */
+.cat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cat-btn {
+  padding: 7px 16px;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.6);
+  color: var(--text-mid);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+.cat-btn:hover { border-color: var(--border); color: var(--text-dark); }
+.cat-btn.selected {
+  border-color: transparent;
+  color: var(--text-dark);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* ── Modal registrar ──────────────────────────────────────────── */
+.modo-toggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.5);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  width: fit-content;
+}
+
+.modo-btn {
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  transition: var(--transition);
+  font-family: inherit;
+}
+.modo-btn.active {
+  background: linear-gradient(135deg, #C8A8E8, #E8A8C0);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(180,130,200,0.28);
+}
+.modo-btn:hover:not(.active) { background: var(--bg-hover); color: var(--text-dark); }
+
+.palavras-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+
+.chip-btn {
+  padding: 5px 14px;
+  border: 1.5px solid;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  color: var(--text-dark);
+}
+.chip-btn:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.12); transform: translateY(-1px); }
+.chip-btn.selected { box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+
+.registro-hora {
+  font-size: 11px;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+/* ── Period buttons ───────────────────────────────────────────── */
+.period-btn {
+  padding: 5px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 700;
+  background: rgba(255,255,255,0.6);
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.period-btn.active,
+.period-btn:hover {
+  background: linear-gradient(135deg, #C8A8E8, #E8A8C0);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 3px 8px rgba(180,130,200,0.28);
+}
+
+/* ── remove-btn ───────────────────────────────────────────────── */
+.remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-soft);
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  margin-left: auto;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.remove-btn:hover { background: #FEF0F3; color: #C06080; }
+
+@media (max-width: 600px) {
+  .palavras-grid { grid-template-columns: 1fr 1fr; }
+  .abas-bar { width: 100%; justify-content: stretch; }
+  .aba-btn { flex: 1; text-align: center; }
+}

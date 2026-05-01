@@ -1,0 +1,117 @@
+<div class="modal-overlay" [class.open]="aberto"
+     (click)="$event.target === $event.currentTarget && fechar()">
+  <div class="modal modal-grande" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <i class="ph ph-chart-line ph-icon-btn"></i> Histórico de estados
+      </h2>
+      <button class="modal-close" (click)="fechar()">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+
+    <div class="controles-bar">
+      <span class="controles-label">Período</span>
+      @for (d of [14, 30, 60, 90]; track d) {
+        <button class="period-btn" [class.active]="diasHistorico === d"
+          (click)="diasHistorico = d; carregar()">{{ d }}d</button>
+      }
+      <span class="controles-sep"></span>
+      <span class="controles-label">Visão</span>
+      <button class="period-btn" [class.active]="visao === 'dia'"    (click)="alternarVisao('dia')">Por dia</button>
+      <button class="period-btn" [class.active]="visao === 'evento'" (click)="alternarVisao('evento')">Por evento</button>
+    </div>
+
+    @if (visao === 'dia') {
+      @if (historico.length === 0) {
+        <div class="empty-state" style="padding:32px 0">
+          <p>Nenhum estado registrado no período.</p>
+        </div>
+      } @else {
+        <div style="height:220px;margin-bottom:24px">
+          <canvas id="grafico-historico-dia"></canvas>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <button class="btn-outline btn-sm" (click)="tabelaExpandida = !tabelaExpandida">
+            <i class="ph" [class.ph-caret-down]="!tabelaExpandida" [class.ph-caret-up]="tabelaExpandida" style="margin-right:4px"></i>
+            {{ tabelaExpandida ? 'Ocultar tabela' : 'Ver tabela de dados' }}
+          </button>
+        </div>
+
+        @if (tabelaExpandida) {
+          <div class="historico-tabela">
+            <div class="hist-header">
+              <span>Data</span>
+              <span>Humor</span>
+              <span>Energia</span>
+              <span>Estresse</span>
+              <span>Sensib.</span>
+              <span>Seren.</span>
+              <span>Inter.</span>
+              <span>Qtd</span>
+            </div>
+            @for (e of historico.slice().reverse(); track e.data) {
+              <div class="hist-row">
+                <span class="hist-data">{{ e.data | date:'dd/MM' }}</span>
+                <span class="hist-val humor">{{ exibir(e.humor) }}</span>
+                <span class="hist-val energia">{{ exibir(e.energia) }}</span>
+                <span class="hist-val estresse">{{ exibir(e.estresse) }}</span>
+                <span class="hist-val sensibilidade">{{ exibir(e.sensibilidade) }}</span>
+                <span class="hist-val serenidade">{{ exibir(e.serenidade) }}</span>
+                <span class="hist-val interesse">{{ exibir(e.interesse) }}</span>
+                <span class="hist-val">{{ e.total_eventos }}</span>
+              </div>
+            }
+          </div>
+        }
+      }
+    }
+
+    @if (visao === 'evento') {
+      @if (eventos.length === 0) {
+        <div class="empty-state" style="padding:32px 0">
+          <p>Nenhum evento registrado no período.</p>
+        </div>
+      } @else {
+        <div style="height:220px;margin-bottom:24px">
+          <canvas id="grafico-historico-evento"></canvas>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <button class="btn-outline btn-sm" (click)="tabelaExpandida = !tabelaExpandida">
+            <i class="ph" [class.ph-caret-down]="!tabelaExpandida" [class.ph-caret-up]="tabelaExpandida" style="margin-right:4px"></i>
+            {{ tabelaExpandida ? 'Ocultar tabela' : 'Ver tabela de dados' }}
+          </button>
+        </div>
+
+        @if (tabelaExpandida) {
+          <div class="historico-tabela historico-tabela-eventos">
+            <div class="hist-header hist-header-eventos">
+              <span>Data/Hora</span>
+              <span>Evento</span>
+              <span>Humor</span>
+              <span>Energia</span>
+              <span>Estresse</span>
+              <span>Sensib.</span>
+              <span>Seren.</span>
+              <span>Inter.</span>
+            </div>
+            @for (e of eventos.slice().reverse(); track e.id) {
+              <div class="hist-row hist-row-eventos">
+                <span class="hist-data">{{ formatarDataHora(e.data_hora) }}</span>
+                <span class="hist-label">{{ e.evento }}</span>
+                <span class="hist-val humor">{{ exibir(e.humor) }}</span>
+                <span class="hist-val energia">{{ exibir(e.energia) }}</span>
+                <span class="hist-val estresse">{{ exibir(e.estresse) }}</span>
+                <span class="hist-val sensibilidade">{{ exibir(e.sensibilidade) }}</span>
+                <span class="hist-val serenidade">{{ exibir(e.serenidade) }}</span>
+                <span class="hist-val interesse">{{ exibir(e.interesse) }}</span>
+              </div>
+            }
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

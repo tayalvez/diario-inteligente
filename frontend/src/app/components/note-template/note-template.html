@@ -1,0 +1,36 @@
+<div [class]="cls">
+
+  <!-- ── Decorações (kawaii) ────────────────────────────────────── -->
+  @if (template === 'kawaii') {
+    <div class="nt-deco" aria-hidden="true">
+      <span class="nt-d nt-d-star  pos-tl">✦</span>
+      <span class="nt-d nt-d-star  pos-tr">✦</span>
+      <span class="nt-d nt-d-heart pos-ml">♡</span>
+      <span class="nt-d nt-d-heart pos-mr">♡</span>
+      <span class="nt-d nt-d-flower pos-bl">✿</span>
+      <span class="nt-d nt-d-cloud  pos-bc">☁</span>
+      <span class="nt-d nt-d-flower pos-br">✿</span>
+      <span class="nt-d nt-d-dot    pos-dt1"></span>
+      <span class="nt-d nt-d-dot    pos-dt2"></span>
+      <span class="nt-d nt-d-dot    pos-dt3"></span>
+    </div>
+  }
+
+  <!-- ── Decorações (notebook) ─────────────────────────────────── -->
+  @if (template === 'notebook') {
+    <div class="nt-deco" aria-hidden="true">
+      <div class="nt-nb-margem"></div>
+      <div class="nt-nb-holes">
+        @for (n of [0,1,2,3,4,5,6]; track n) {
+          <div class="nt-nb-hole"></div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ── Conteúdo ───────────────────────────────────────────────── -->
+  <div class="nt-content">
+    <ng-content></ng-content>
+  </div>
+
+</div>
