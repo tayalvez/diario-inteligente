@@ -101,13 +101,13 @@ def criar_tabelas():
     from sqlalchemy import inspect
 
     inspector = inspect(engine)
-    tabelas_atuais = set(inspector.get_table_names())
+    tabelas_iniciais = set(inspector.get_table_names())
 
-    if "eventos" in tabelas_atuais:
+    if "eventos" in tabelas_iniciais:
         cols_eventos = {c["name"] for c in inspector.get_columns("eventos")}
         schema_ok = (
             _COLUNAS_ESPERADAS.issubset(cols_eventos)
-            and _TABELAS_ESPERADAS.issubset(tabelas_atuais)
+            and _TABELAS_ESPERADAS.issubset(tabelas_iniciais)
         )
         if not schema_ok:
             print("[db] Schema desatualizado — recriando banco de dados...")
@@ -116,6 +116,8 @@ def criar_tabelas():
     Base.metadata.create_all(bind=engine)
 
     # Migrações incrementais — adiciona colunas novas sem recriar o banco
+    inspector = inspect(engine)
+    tabelas_atuais = set(inspector.get_table_names())
     with engine.connect() as conn:
         cols_relacoes = {c["name"] for c in inspector.get_columns("relacoes_evento")} if "relacoes_evento" in tabelas_atuais else set()
         if "motivo" not in cols_relacoes:
