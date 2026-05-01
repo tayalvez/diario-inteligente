@@ -45,3 +45,6 @@ dist/
 # Arquivos temporarios
 *.tmp
 *.swp
+
+# Documentacao
+*.md
