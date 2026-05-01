@@ -24,12 +24,11 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app/ ./app/
-COPY models/ ./models/
 COPY scripts/ ./scripts/
 
 COPY --from=frontend-build /build/app/static ./app/static
 
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data /app/models
 
 EXPOSE 8000
 
